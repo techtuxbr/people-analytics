@@ -3,14 +3,21 @@
     require_once "../database/connection.php";
 
 
-    function validateCompany($email, $name, $password){
+    function validateCompany($email, $name, $password, $responsible, $phone, $state, $city, $address, $zip, $bnumber){
         // Validação leve
         $result = ["status" => true, 
             "errors" => [], 
             "data" => [
                     "email" => $email, 
                     "name" => $name, 
-                    "password" => $password
+                    "password" => $password,
+                    "responsible" => $responsible,
+                    "phone" => $phone,
+                    "state" => $state,
+                    "city" => $city,
+                    "address" => $address,
+                    "zip" => $zip,
+                    "bnumber" => $bnumber
                     ]
             ];
         if(!isset($name) || empty($name)){
@@ -26,6 +33,46 @@
         if(!isset($password) || empty($password)){
             $result["status"] = false;
             array_push($result["errors"],"A senha é inválida");
+        }
+
+
+
+        if(!isset($responsible) || empty($responsible)){
+            $result["status"] = false;
+            array_push($result["errors"],"O nome do responsável é inválido");
+        }
+        
+        if(!isset($phone) || empty($phone)){
+            $result["status"] = false;
+            array_push($result["errors"],"O número de celular é inválido");
+        }
+
+        if(!isset($state) || empty($state)){
+            $result["status"] = false;
+            array_push($result["errors"],"O estado é inválido");
+        }
+
+
+
+
+        if(!isset($city) || empty($city)){
+            $result["status"] = false;
+            array_push($result["errors"],"A cidade é inválida");
+        }
+        
+        if(!isset($address) || empty($address)){
+            $result["status"] = false;
+            array_push($result["errors"],"O endereço é inválido");
+        }
+
+        if(!isset($zip) || empty($zip)){
+            $result["status"] = false;
+            array_push($result["errors"],"O CEP é inválido");
+        }
+
+        if(!isset($bnumber) || empty($bnumber)){
+            $result["status"] = false;
+            array_push($result["errors"],"O CNPJ é inválido");
         }
 
         // Se algum erro acontecer na validação leve, retorne todos eles.
@@ -49,18 +96,26 @@
     }
 
 
-    function createCompany($email, $name, $password)
+    function createCompany($email, $name, $password, $responsible, $phone, $state, $city, $address, $zip, $bnumber)
     {
-        $result = validateCompany($email,$name,$password);
+        $result = validateCompany($email,$name,$password, $responsible, $phone, $state, $city, $address, $zip, $bnumber);
 
         if($result["status"]){
             try{
                 global $database;
-                $query = $database->prepare("INSERT INTO companies(email, name, password) VALUES (:email, :name, :password)");
+                $query = $database->prepare("INSERT INTO companies(email, name, password, responsible, phone, credits, state, city, address ,zip , bnumber) VALUES (:email, :name, :password, :responsible, :phone, :credits, :state, :city, :address ,:zip, :bnumber)");
                 $hash = password_hash($password, PASSWORD_DEFAULT);
                 $query->bindValue(":email",$email, PDO::PARAM_STR);
                 $query->bindValue(":name",$name, PDO::PARAM_STR);
                 $query->bindValue(":password",$hash);
+                $query->bindValue(":responsible",$responsible, PDO::PARAM_STR);
+                $query->bindValue(":phone",$phone, PDO::PARAM_STR);
+                $query->bindValue(":credits",10);
+                $query->bindValue(":state", $state, PDO::PARAM_STR);
+                $query->bindValue(":city", $city, PDO::PARAM_STR);
+                $query->bindValue(":address",$address, PDO::PARAM_STR);
+                $query->bindValue(":zip",$zip, PDO::PARAM_STR);
+                $query->bindValue(":bnumber",$bnumber,PDO::PARAM_STR);
                 $query->execute();
                 return $result;
             }catch(Exception $e){

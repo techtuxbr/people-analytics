@@ -35,6 +35,12 @@
         $email = "";
         $password = "";
         $name = "";
+        $cnpj = "";
+        $responsible =  "";
+        $phone = "";
+        $city = "";
+        $address = "";
+        $zip = "";
 
         if(isset($_SESSION["errors"])){
           foreach($_SESSION["errors"] as $error){ ?>
@@ -50,6 +56,13 @@
             $email = $_SESSION["formData"]["email"];
             $password = $_SESSION["formData"]["password"];
             $name = $_SESSION["formData"]["name"];
+            $cnpj = $_SESSION["formData"]["bnumber"];
+            $responsible =  $_SESSION["formData"]["responsible"];
+            $phone = $_SESSION["formData"]["phone"];
+            $city = $_SESSION["formData"]["city"];
+            $address = $_SESSION["formData"]["address"];
+            $zip = $_SESSION["formData"]["zip"];
+    
             unset($_SESSION["formData"]);
         }
     ?>
@@ -63,23 +76,45 @@
             <div class="card-body">
                 <div class="form-group">
                     <label for="exampleInputEmail1">Nome da empresa</label>
-                    <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Minha Empresa LTDA." name="companyName" value="<?php echo $name ?>">
+                    <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Minha Empresa LTDA." name="companyName" value="<?php echo $name ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">CNPJ</label>
+                    <input type="text" class="form-control" id="exampleInputEmail1" placeholder="CNPJ de sua empresa" name="bnumber" value="<?php echo $cnpj ?>" required>
                 </div>
                 <div class="form-group">
                     <label for="exampleInputEmail1">Endereço de E-mail</label>
-                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="seuemail@email.com" name="email" value="<?php echo $email ?>">
+                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="seuemail@email.com" name="email" value="<?php echo $email ?>" required>
                   </div>
                   <div class="form-group">
                     <label for="exampleInputEmail1">Senha</label>
-                    <input type="password" class="form-control" id="exampleInputEmail1" placeholder="*********" name="password" value="<?php echo $password ?>">
+                    <input type="password" class="form-control" id="exampleInputEmail1" placeholder="*********" name="password" value="<?php echo $password ?>" required>
                   </div>
                   <div class="form-group">
                     <label for="exampleInputEmail1">Nome do responsável</label>
-                    <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Nome do responsável pela empresa" name="companyName" value="<?php echo $name ?>">
+                    <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Nome do responsável pela empresa" name="responsible" value="<?php echo $responsible ?>" required>
                   </div>
                   <div class="form-group">
                     <label for="exampleInputEmail1">Celular</label>
-                    <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Celular para contato." name="companyName" value="<?php echo $name ?>">
+                    <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Celular para contato." name="phone" value="<?php echo $phone ?>" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Estado</label>
+                    <?php 
+                      require('./ui/forms/states.php'); 
+                    ?>
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Cidade</label>
+                    <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Cidade sede da empresa" name="city" value="<?php echo $city ?>" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Endereço</label>
+                    <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Celular para contato." name="address" value="<?php echo $address ?>" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">CEP</label>
+                    <input type="text" class="form-control" id="exampleInputEmail1" placeholder="CEP" name="zip" value="<?php echo $zip ?>" required>
                   </div>
                 </div>
                 <!-- /.card-body -->
