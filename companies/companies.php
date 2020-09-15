@@ -2,14 +2,14 @@
     session_start();
     require_once("../services/company.php");
 
-
-    if($_SERVER['REQUEST_METHOD'] == 'POST'){
-        $companies = getCompanies();
-        echo json_encode($companies);
-        exit;
-        //return $companies;
+    if(!empty($_GET["search"])){
+      $search =  htmlspecialchars($_GET["search"]);
+    }else{
+      $search = null;
     }
     
+    $companies = getCompanies($search);
+    $count = getCompaniesCount();
 ?>
 <!DOCTYPE html>
 <html>
@@ -71,56 +71,56 @@
     <section class="content">
       <div class="container-fluid">
 
+      <form action="companies.php" method="GET">
         <div class="row">
           <div class="col-2"></div>
-          <div class="col-8">
-            <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="fas fa-search"></i></span>
-                </div>
-                <input type="text" class="form-control" placeholder="Busque uma empresa pelo nome ou e-mail dela.">
+          
+            <div class="col-8">
+              <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                  </div>
+  
+                    <input type="text" class="form-control" placeholder="Busque uma empresa pelo nome ou e-mail dela." name="search">          
+              </div>
+              
             </div>
-            
-          </div>
-          <div class="col-1">
-            <button type="button" class="btn btn-block btn-primary">Buscar</button>
-          </div>
+            <div class="col-1">
+              <button type="submit" class="btn btn-block btn-primary">Buscar</button>
+            </div>
+          
         </div>
+        </form>
         <div class="row">
           <div class="col-3"></div>
           <div class="col-6">
           <div id="companies">
-          </div>
-          </div>
-        </div>
-
-
-        
-        <div class="card card-widget widget-user-2" id="companyPrefab" style="display: none;">
+          <?php foreach($companies as $company) { ?>
+            <div class="card card-widget widget-user-2" id="companyPrefab">
               <!-- Add the bg color to the header using any of the bg-* classes -->
               <div class="widget-user-header bg-success">
                 <div class="widget-user-image">
                    <img class="img-circle elevation-2" src="../img/w4ticon.png" alt="User Avatar">
                 </div>
                 <!-- /.widget-user-image -->
-                <h3 class="widget-user-username companyName">Empresa</h3>
-                <h5 class="widget-user-desc bnumber">CNPJ</h5>
+                <h3 class="widget-user-username companyName"><?= $company["name"] ?></h3>
+                <h5 class="widget-user-desc bnumber"><?= $company["bnumber"] ?></h5>
               </div>
               <div class="card-footer p-0">
                 <ul class="nav flex-column">
                   <li class="nav-item">
                     <span class="nav-link">
-                      <div>Responsável: <span class="responsible"></span></div>
+                      <div>Responsável: <span class="responsible"><?= $company["responsible"] ?></span></div>
                     </span>
                   </li>
                   <li class="nav-item">
                     <span class="nav-link">
-                      <div>E-mail: <span class="email"></span></div>
+                      <div>E-mail: <span class="email"><?= $company["email"] ?></span></div>
                     </span>
                   </li>
                   <li class="nav-item">
                     <span class="nav-link">
-                      <div>Créditos: <span class="credits badge bg-success">199</span></div>
+                      <div>Créditos: <span class="credits badge bg-success"><?= $company["credits"] ?></span></div>
                     </span>
                   </li>
                   <li class="nav-item">
@@ -131,7 +131,30 @@
                 </ul>
               </div>
             </div>
-
+          <?php } ?>
+          </div>
+          </div>
+        </div>
+        <div class="row">
+            <div class="col-4"></div>
+            <div class="col-2">
+              <nav aria-label="...">
+                <ul class="pagination">
+                  <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1">Previous</a>
+                  </li>
+                  <li class="page-item"><a class="page-link" href="#">1</a></li>
+                  <li class="page-item active">
+                    <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
+                  </li>
+                  <li class="page-item"><a class="page-link" href="#">3</a></li>
+                  <li class="page-item">
+                    <a class="page-link" href="#">Next</a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+        </div>
 
       </div><!-- /.container-fluid -->
     </section>
@@ -177,36 +200,5 @@
 <script src="../plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
 <!-- AdminLTE App -->
 <script src="../dist/js/adminlte.js"></script>
-<script>
-  $(document).ready(function(){
-
-    var companyPrefab = $("#companyPrefab");
-    var companiesDiv = $("#companies");
-    
-
-    $.post( "companies.php", function( data ) {
-
-      data = JSON.parse(data);
-      
-      data.forEach(company => {
-        var companyComponent = $(companyPrefab).clone();
-        $(companyComponent).removeAttr("id");
-        $(companyComponent).removeAttr("style");
-
-        $(companyComponent).find(".companyName").html(company.name);
-        $(companyComponent).find(".bnumber").html(company.bnumber);
-        $(companyComponent).find(".responsible").html(company.responsible);
-        $(companyComponent).find(".email").html(company.email);
-        $(companyComponent).find(".credits").html(company.credits);
-        
-
-
-
-
-        $(companyComponent).appendTo(companiesDiv);
-      });
-    });
-  });
-</script>
 </body>
 </html>

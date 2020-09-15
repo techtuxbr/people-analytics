@@ -147,12 +147,28 @@
         }
     } 
 
-    function getCompanies(){
+    function getCompanies($search){
         global $database;
         $result = [];
-        $query = $database->query("SELECT email, name, responsible, phone, credits, bnumber FROM companies LIMIT 4");
+        if(!empty($search)){
+            $query = $database->prepare("SELECT email, name, responsible, phone, credits, bnumber FROM companies WHERE name LIKE :search OR email LIKE :search LIMIT 4");
+            $likeSearch = "%".$search."%";
+            $query->bindParam(":search",$likeSearch, PDO::PARAM_STR);
+            $query->execute();
+        }else{
+            $query = $database->query("SELECT email, name, responsible, phone, credits, bnumber FROM companies LIMIT 4");
+        }
         //array_push($result,);
         return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    function getCompaniesCount(){
+        global $database;
+        $sql = "SELECT count(*) FROM `companies`"; 
+        $result = $database->prepare($sql); 
+        $result->execute(); 
+        $number_of_rows = $result->fetchColumn();
+        return $number_of_rows;
     }
 
 ?>
