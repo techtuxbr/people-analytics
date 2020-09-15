@@ -147,4 +147,12 @@
         }
     } 
 
+    function getCompanies(){
+        global $database;
+        $result = [];
+        $query = $database->query("SELECT email, name, responsible, phone, credits, bnumber FROM companies LIMIT 4");
+        //array_push($result,);
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 ?>
