@@ -147,28 +147,62 @@
         }
     } 
 
-    function getCompanies($search){
+    function getCompanies($search,$page = 0){
+        $amountOfRegsPerPage = 4;
+        
+        if(!is_numeric($page)){
+            $page = 0;
+        }
+
+        $page = (int)$page;
+        
+        $offset = (int)$page * (int)$amountOfRegsPerPage;
+
+
         global $database;
         $result = [];
         if(!empty($search)){
-            $query = $database->prepare("SELECT email, name, responsible, phone, credits, bnumber FROM companies WHERE name LIKE :search OR email LIKE :search LIMIT 4");
+            $query = $database->prepare("SELECT email, name, responsible, phone, credits, bnumber FROM companies WHERE name LIKE :search OR email LIKE :search LIMIT 4 OFFSET :offset");
             $likeSearch = "%".$search."%";
             $query->bindParam(":search",$likeSearch, PDO::PARAM_STR);
+            $query->bindParam(":offset",$offset, PDO::PARAM_INT);
             $query->execute();
         }else{
-            $query = $database->query("SELECT email, name, responsible, phone, credits, bnumber FROM companies LIMIT 4");
+            $query = $database->prepare("SELECT email, name, responsible, phone, credits, bnumber FROM companies LIMIT 4 OFFSET :offset");
+            $query->bindParam(":offset",$offset, PDO::PARAM_INT);
+            $query->execute();
         }
         //array_push($result,);
         return $query->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    function getCompaniesCount(){
+    function getCompaniesCount($search){
         global $database;
-        $sql = "SELECT count(*) FROM `companies`"; 
-        $result = $database->prepare($sql); 
-        $result->execute(); 
-        $number_of_rows = $result->fetchColumn();
-        return $number_of_rows;
+
+        if(!empty($search)){
+
+            $sql = "SELECT count(*) FROM `companies` WHERE name LIKE :search OR email LIKE :search"; 
+            $result = $database->prepare($sql); 
+
+            $likeSearch = "%".$search."%";
+            $result->bindParam(":search",$likeSearch, PDO::PARAM_STR);
+
+            $result->execute(); 
+            $number_of_rows = $result->fetchColumn();
+            return $number_of_rows;
+
+        }else{
+
+
+            $sql = "SELECT count(*) FROM `companies`"; 
+            $result = $database->prepare($sql); 
+            $result->execute(); 
+            $number_of_rows = $result->fetchColumn();
+            return $number_of_rows;
+
+        }
+
+
     }
 
 ?>

@@ -1,15 +1,24 @@
 <?php
     session_start();
     require_once("../services/company.php");
+    $maxPerPage = 4;
 
     if(!empty($_GET["search"])){
       $search =  htmlspecialchars($_GET["search"]);
     }else{
       $search = null;
     }
+
+    if(!empty($_GET["page"])){
+      $page = htmlspecialchars($_GET["page"]); 
+    }else{
+      $page = 0;
+    }
     
-    $companies = getCompanies($search);
-    $count = getCompaniesCount();
+    $companies = getCompanies($search,$page);
+    $count = getCompaniesCount($search);
+
+    $currentCount = ((int)$page+1) * $maxPerPage;
 ?>
 <!DOCTYPE html>
 <html>
@@ -91,6 +100,7 @@
           
         </div>
         </form>
+
         <div class="row">
           <div class="col-3"></div>
           <div class="col-6">
@@ -136,26 +146,20 @@
           </div>
         </div>
         <div class="row">
-            <div class="col-4"></div>
-            <div class="col-2">
-              <nav aria-label="...">
-                <ul class="pagination">
-                  <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1">Previous</a>
-                  </li>
-                  <li class="page-item"><a class="page-link" href="#">1</a></li>
-                  <li class="page-item active">
-                    <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
-                  </li>
-                  <li class="page-item"><a class="page-link" href="#">3</a></li>
-                  <li class="page-item">
-                    <a class="page-link" href="#">Next</a>
-                  </li>
-                </ul>
-              </nav>
-            </div>
+          <div class="col-4"></div>
+          <div class="col-4">
+            <?php if($currentCount > $maxPerPage){ ?>
+              <a style="float:left; color: white" class="btn btn-success" href="companies.php<?= '?page='.((int)$page-1).'&search='.$search?>">Anterior</a>
+            <?php } ?>
+            <?php if($currentCount <= $count){ ?>
+              <a style="float:right; color: white" class="btn btn-success" href="companies.php<?= '?page='.((int)$page+1).'&search='.$search?>">Próximo</a>
+            <?php } ?>
+          </div>
+          <div class="col-4"></div>
         </div>
-
+        <div class="row">
+          <hr>
+        </div>
       </div><!-- /.container-fluid -->
     </section>
     <!-- /.content -->
